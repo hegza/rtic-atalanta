@@ -3,6 +3,7 @@
     feature = "cortex-m-basepri",
     feature = "test-template",
     feature = "riscv-esp32c3",
+    feature = "riscv-atalanta",
     feature = "riscv-slic",
 )))]
 compile_error!("No backend selected");
@@ -30,3 +31,9 @@ pub use riscv_slic::*;
 
 #[cfg(feature = "riscv-slic")]
 mod riscv_slic;
+
+#[cfg(feature = "riscv-atalanta")]
+pub use riscv_atalanta::*;
+
+#[cfg(feature = "riscv-atalanta")]
+mod riscv_atalanta;
