@@ -123,11 +123,11 @@ pub fn check_stack_overflow_before_init(
         // Check for stack overflow using symbols from `risc-v-rt`.
         extern "C" {
             pub static _stack_start: u32;
-            pub static _bss_end: u32;
+            pub static _ebss: u32;
         }
 
         let stack_start = &_stack_start as *const _ as u32;
-        let ebss = &_bss_end as *const _ as u32;
+        let ebss = &_ebss as *const _ as u32;
 
         if stack_start > ebss {
             // No flip-link usage, check the SP for overflow.
