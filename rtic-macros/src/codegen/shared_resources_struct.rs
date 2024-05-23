@@ -23,7 +23,7 @@ pub fn codegen(ctxt: Context, app: &App) -> (TokenStream2, TokenStream2) {
     let mut values = vec![];
 
     for (name, access) in resources {
-        let res = app.shared_resources.get(name).expect("UNREACHABLE");
+        let res = app.shared_resources.get(name).expect("UNREACHABLE4");
 
         let cfgs = &res.cfgs;
 

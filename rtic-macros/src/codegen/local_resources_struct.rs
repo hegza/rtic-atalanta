@@ -30,7 +30,7 @@ pub fn codegen(ctxt: Context, app: &App) -> (TokenStream2, TokenStream2) {
     for (name, task_local) in resources {
         let (cfgs, ty, is_declared) = match task_local {
             TaskLocal::External => {
-                let r = app.local_resources.get(name).expect("UNREACHABLE");
+                let r = app.local_resources.get(name).expect("UNREACHABLE3");
                 (&r.cfgs, &r.ty, false)
             }
             TaskLocal::Declared(r) => (&r.cfgs, &r.ty, true),

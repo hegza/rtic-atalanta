@@ -326,7 +326,7 @@ impl App {
 
                         if let Fields::Named(fields) = &mut struct_item.fields {
                             for field in &mut fields.named {
-                                let ident = field.ident.as_ref().expect("UNREACHABLE");
+                                let ident = field.ident.as_ref().expect("UNREACHABLE6");
 
                                 if shared_resources.contains_key(ident) {
                                     return Err(parse::Error::new(
@@ -364,7 +364,7 @@ impl App {
 
                         if let Fields::Named(fields) = &mut struct_item.fields {
                             for field in &mut fields.named {
-                                let ident = field.ident.as_ref().expect("UNREACHABLE");
+                                let ident = field.ident.as_ref().expect("UNREACHABLE7");
 
                                 if local_resources.contains_key(ident) {
                                     return Err(parse::Error::new(

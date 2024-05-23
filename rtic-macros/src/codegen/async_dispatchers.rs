@@ -30,7 +30,7 @@ pub fn codegen(app: &App, analysis: &Analysis) -> TokenStream2 {
         let mut stmts = vec![];
 
         let dispatcher_name = if level > 0 {
-            util::suffixed(&interrupts.get(&level).expect("UNREACHABLE").0.to_string())
+            util::suffixed(&interrupts.get(&level).expect("UNREACHABLE2").0.to_string())
         } else {
             util::zero_prio_dispatcher_ident()
         };
@@ -65,7 +65,7 @@ pub fn codegen(app: &App, analysis: &Analysis) -> TokenStream2 {
 
         if level > 0 {
             let doc = format!("Interrupt handler to dispatch async tasks at priority {level}");
-            let attribute = &interrupts.get(&level).expect("UNREACHABLE").1.attrs;
+            let attribute = &interrupts.get(&level).expect("UNREACHABLE3").1.attrs;
             let entry_stmts = interrupt_entry(app, analysis);
             let exit_stmts = interrupt_exit(app, analysis);
             let async_entry_stmts = async_entry(app, analysis, dispatcher_name.clone());

@@ -203,7 +203,7 @@ pub(crate) fn app(app: &App) -> Result<Analysis, syn::Error> {
     let mut ownerships = Ownerships::new();
     let mut sync_types = SyncTypes::new();
     for (prio, name, access) in app.shared_resource_accesses() {
-        let res = app.shared_resources.get(name).expect("UNREACHABLE");
+        let res = app.shared_resources.get(name).expect("UNREACHABLE5");
 
         // (e)
         // This shared resource is used
