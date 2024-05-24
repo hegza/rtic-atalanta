@@ -21,6 +21,7 @@ pub fn run<F>(level: u8, f: F)
 where
     F: FnOnce(),
 {
+    //uart_write("run enter\r\n");
     if level == 1 {
         // If level is 1, level thresh should be 1
         f();
@@ -71,6 +72,7 @@ pub unsafe fn lock<T, R>(ptr: *mut T, ceiling: u8, f: impl FnOnce(&mut T) -> R) 
 /// Set the given software interrupt as pending
 #[inline(always)]
 pub fn pend(intr: Interrupt) {
+    uart_write("pend\r\n");
     unsafe { CLIC::ip(intr).pend() }
 }
 
@@ -84,6 +86,8 @@ pub fn set_level(intr: Interrupt, level: u8) {
 }
 
 pub fn enable(intr: Interrupt, level: u8) {
+    //sprintln!("en intr ? at level {}", level);
+    //sprintln!("en {:?}", intr);
     CLIC::attr(intr).set_trig(Trig::Edge);
     CLIC::attr(intr).set_polarity(Polarity::Pos);
     CLIC::ctl(intr).set_level(level);
@@ -101,9 +105,11 @@ pub fn disable(intr: Interrupt) {
 
 pub fn set_interrupts() {
     CLIC::smclicconfig().set_mnlbits(8);
+    uart_write("mintthresh <- 0x0\r\n");
     mintthresh::write(0x0);
 }
 
 pub fn clear_interrupts() {
+    uart_write("mintthresh <- 0xff\r\n");
     mintthresh::write(0xff);
 }
