@@ -1,7 +1,7 @@
 pub use rt_ss_bsp::{interrupt::Interrupt, riscv::interrupt, Peripherals};
 
 use riscv_peripheral::clic::intattr::{Polarity, Trig};
-use rt_ss_bsp::clic::CLIC;
+use rt_ss_bsp::{clic::CLIC, uart::uart_write};
 
 #[cfg(all(feature = "riscv-atalanta", not(feature = "riscv-atalanta-backend")))]
 compile_error!("Building for Atalanta, but 'riscv-atalanta-backend not selected'");
@@ -54,13 +54,13 @@ where
 #[inline(always)]
 pub unsafe fn lock<T, R>(ptr: *mut T, ceiling: u8, f: impl FnOnce(&mut T) -> R) -> R {
     if ceiling == (15) {
-        //turn off interrupts completely, were at max prio
+        // turn off interrupts completely, were at max prio
         let r = critical_section::with(|_| f(&mut *ptr));
         r
     } else {
         let current = mintthresh::read();
 
-        // Atalanta ...? lets interrupts with prio equal to threshold through so we up it by one
+        // Atalanta/RT-Ibex lets interrupts with prio equal to threshold through so we up it by one
         mintthresh::write((ceiling + 1) as usize);
         let r = f(&mut *ptr);
         mintthresh::write(current as usize);
@@ -100,5 +100,10 @@ pub fn disable(intr: Interrupt) {
 }
 
 pub fn set_interrupts() {
-    unsafe { rt_ss_bsp::riscv::register::mie::set_msoft() }
+    CLIC::smclicconfig().set_mnlbits(8);
+    mintthresh::write(0x0);
+}
+
+pub fn clear_interrupts() {
+    mintthresh::write(0xff);
 }

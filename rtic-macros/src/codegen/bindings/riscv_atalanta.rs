@@ -77,7 +77,7 @@ pub fn pre_init_checks(app: &App, _: &SyntaxAnalysis) -> Vec<TokenStream2> {
 pub fn pre_init_enable_interrupts(app: &App, analysis: &CodegenAnalysis) -> Vec<TokenStream2> {
     let mut stmts = vec![];
 
-    // TODO: First, we reset and disable all the interrupt controllers
+    // First, we reset and disable all the interrupt controllers
     stmts.push(quote! {
         rtic::export::clear_interrupts();
         rtic::export::interrupt::disable();
@@ -103,7 +103,7 @@ pub fn pre_init_enable_interrupts(app: &App, analysis: &CodegenAnalysis) -> Vec<
 }
 
 /// Any additional checks that depend on the system architecture.
-pub fn architecture_specific_analysis(app: &App, _analysis: &SyntaxAnalysis) -> parse::Result<()> {
+pub fn architecture_specific_analysis(_app: &App, _analysis: &SyntaxAnalysis) -> parse::Result<()> {
     Ok(())
 }
 
@@ -119,6 +119,7 @@ pub fn check_stack_overflow_before_init(
     _app: &App,
     _analysis: &CodegenAnalysis,
 ) -> Vec<TokenStream2> {
+    // This takes a lot of size from .text due to dependency on core::fmt so we disable it
     vec![quote!(
         // Check for stack overflow using symbols from `risc-v-rt`.
         extern "C" {
@@ -132,7 +133,7 @@ pub fn check_stack_overflow_before_init(
         if stack_start > ebss {
             // No flip-link usage, check the SP for overflow.
             if rtic::export::read_sp() <= ebss {
-                panic!("Stack overflow after allocating executors");
+                panic!("pre-init sp ovrflw");
             }
         }
     )]
@@ -145,17 +146,17 @@ pub fn async_entry(
 ) -> Vec<TokenStream2> {
     let mut stmts = vec![];
     stmts.push(quote!(
-        rtic::export::unpend(rtic::export::Interrupt::#dispatcher_name); //simulate cortex-m behavior by unpending the interrupt on entry.
+        // Unpend interrupt on entry
+        rtic::export::unpend(rtic::export::Interrupt::#dispatcher_name);
     ));
     stmts
 }
 
-pub fn async_prio_limit(app: &App, analysis: &CodegenAnalysis) -> Vec<TokenStream2> {
+pub fn async_prio_limit(_app: &App, analysis: &CodegenAnalysis) -> Vec<TokenStream2> {
     let max = if let Some(max) = analysis.max_async_prio {
         quote!(#max)
     } else {
         // No limit
-        let device = &app.args.device;
         quote!(u8::MAX)
     };
 
@@ -167,11 +168,25 @@ pub fn async_prio_limit(app: &App, analysis: &CodegenAnalysis) -> Vec<TokenStrea
 }
 
 pub fn handler_config(
-    _app: &App,
-    _analysis: &CodegenAnalysis,
-    _dispatcher_name: Ident,
+    app: &App,
+    analysis: &CodegenAnalysis,
+    dispatcher_name: Ident,
 ) -> Vec<TokenStream2> {
-    vec![]
+    let mut stmts = vec![];
+    let interrupt_ids = analysis.interrupts.iter().map(|(p, (id, _))| (p, id));
+    for (_, name) in interrupt_ids.chain(
+        app.hardware_tasks
+            .values()
+            .filter_map(|task| Some((&task.args.priority, &task.args.binds))),
+    ) {
+        if *name == dispatcher_name {
+            // TODO: replace with interrupt specific name after RT implements the entry points
+            let ret = &("DefaultHandler");
+            stmts.push(quote!(#[export_name = #ret]));
+        }
+    }
+
+    stmts
 }
 
 pub fn extra_modules(_app: &App, _analysis: &SyntaxAnalysis) -> Vec<TokenStream2> {
