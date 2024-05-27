@@ -77,6 +77,7 @@ pub fn codegen(app: &App, analysis: &Analysis) -> TokenStream2 {
                 #(#attribute)*
                 #(#config)*
                 unsafe fn #dispatcher_name() {
+                    uart_write("#dispatcher enter\r\n");
                     #(#entry_stmts)*
                     #(#async_entry_stmts)*
 
@@ -88,6 +89,7 @@ pub fn codegen(app: &App, analysis: &Analysis) -> TokenStream2 {
                     });
 
                     #(#exit_stmts)*
+                    uart_write("#dispatcher leave\r\n");
                 }
             ));
         } else {
