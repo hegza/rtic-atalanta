@@ -31,7 +31,7 @@ pub fn run<F>(level: u8, f: F)
 where
     F: FnOnce(),
 {
-    //uart_write("run enter\r\n");
+    uart_write("run task\r\n");
     if level == 1 {
         // If level is 1, level thresh should be 1
         f();
@@ -76,20 +76,26 @@ pub unsafe fn lock<T, R>(ptr: *mut T, ceiling: u8, f: impl FnOnce(&mut T) -> R) 
         let r = f(&mut *ptr);
         mintthresh::write(current as usize);
         r
-    }
+    } */
 }
 
 /// Set the given software interrupt as pending
 #[inline(always)]
 pub fn pend(intr: Interrupt) {
-    uart_write("pend\r\n");
     // Wrapping the pend call with mintthresh raise & lower or a global intr disable seems to be
     // mandatory for proper operation
+    //mintthresh::write(0xff);
+    // sprintln!("lo::is_pending {}", unsafe { CLIC::ip(intr).is_pending() }); // false
+    sprintln!("pend");
+    //sprintln!("sp: {:?}", bitss);
     riscv::interrupt::free(|| unsafe { CLIC::ip(intr).pend() });
+    // sprintln!("lo::is_pending {}", unsafe { CLIC::ip(intr).is_pending() }); // true
+    //mintthresh::write(0x0);
 }
 
 /// Set the given software interrupt as not pending
 pub fn unpend(intr: Interrupt) {
+    sprintln!("unpend");
     unsafe { CLIC::ip(intr).unpend() }
 }
 
@@ -98,8 +104,6 @@ pub fn set_level(intr: Interrupt, level: u8) {
 }
 
 pub fn enable(intr: Interrupt, level: u8) {
-    //sprintln!("en intr ? at level {}", level);
-    //sprintln!("en {:?}", intr);
     CLIC::attr(intr).set_trig(Trig::Edge);
     CLIC::attr(intr).set_polarity(Polarity::Pos);
     CLIC::ctl(intr).set_level(level);
@@ -117,11 +121,9 @@ pub fn disable(intr: Interrupt) {
 
 pub fn set_interrupts() {
     CLIC::smclicconfig().set_mnlbits(8);
-    uart_write("mintthresh <- 0x0\r\n");
     mintthresh::write(0x0);
 }
 
 pub fn clear_interrupts() {
-    uart_write("mintthresh <- 0xff\r\n");
     mintthresh::write(0xff);
 }
