@@ -64,6 +64,8 @@ where
 /// level is current level >= ceiling.
 #[inline(always)]
 pub unsafe fn lock<T, R>(ptr: *mut T, ceiling: u8, f: impl FnOnce(&mut T) -> R) -> R {
+    todo!();
+    /*
     if ceiling == (15) {
         // turn off interrupts completely, were at max prio
         let r = critical_section::with(|_| f(&mut *ptr));
