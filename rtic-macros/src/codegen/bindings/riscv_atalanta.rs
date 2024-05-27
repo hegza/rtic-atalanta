@@ -142,14 +142,9 @@ pub fn check_stack_overflow_before_init(
 pub fn async_entry(
     _app: &App,
     _analysis: &CodegenAnalysis,
-    dispatcher_name: Ident,
+    _dispatcher_name: Ident,
 ) -> Vec<TokenStream2> {
-    let mut stmts = vec![];
-    stmts.push(quote!(
-        // Unpend interrupt on entry
-        rtic::export::unpend(rtic::export::Interrupt::#dispatcher_name);
-    ));
-    stmts
+    vec![]
 }
 
 pub fn async_prio_limit(_app: &App, analysis: &CodegenAnalysis) -> Vec<TokenStream2> {
