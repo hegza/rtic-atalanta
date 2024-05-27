@@ -169,18 +169,12 @@ pub fn handler_config(
     dispatcher_name: Ident,
 ) -> Vec<TokenStream2> {
     let mut stmts = vec![];
-    let interrupt_ids = analysis.interrupts.iter().map(|(p, (id, _))| (p, id));
-    for (_, name) in interrupt_ids.chain(
-        app.hardware_tasks
-            .values()
-            .filter_map(|task| Some((&task.args.priority, &task.args.binds))),
-    ) {
-        if *name == dispatcher_name {
-            // TODO: replace with interrupt specific name after RT implements the entry points
-            let ret = &("DefaultHandler");
-            stmts.push(quote!(#[export_name = #ret]));
-        }
-    }
+
+    // TODO: replace with interrupt specific name after RT implements the entry points
+    let ret = &("DefaultHandler");
+    //let ret = &(&dispatcher_name.to_string());
+    stmts.push(quote!(#[export_name = #ret]));
+    //stmts.push(quote!(#[bsp::rt::interrupt]));
 
     stmts
 }
