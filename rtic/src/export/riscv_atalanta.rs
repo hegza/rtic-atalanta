@@ -73,7 +73,9 @@ pub unsafe fn lock<T, R>(ptr: *mut T, ceiling: u8, f: impl FnOnce(&mut T) -> R) 
 #[inline(always)]
 pub fn pend(intr: Interrupt) {
     uart_write("pend\r\n");
-    unsafe { CLIC::ip(intr).pend() }
+    // Wrapping the pend call with mintthresh raise & lower or a global intr disable seems to be
+    // mandatory for proper operation
+    riscv::interrupt::free(|| unsafe { CLIC::ip(intr).pend() });
 }
 
 /// Set the given software interrupt as not pending
