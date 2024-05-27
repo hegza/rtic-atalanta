@@ -74,13 +74,14 @@ pub fn pre_init_checks(app: &App, _: &SyntaxAnalysis) -> Vec<TokenStream2> {
     }
     stmts
 }
+
 pub fn pre_init_enable_interrupts(app: &App, analysis: &CodegenAnalysis) -> Vec<TokenStream2> {
     let mut stmts = vec![];
 
     // First, we reset and disable all the interrupt controllers
     stmts.push(quote! {
         rtic::export::clear_interrupts();
-        rtic::export::interrupt::disable();
+        rtic::export::global_disable();
     });
 
     // Then, we set the corresponding priorities
@@ -97,7 +98,7 @@ pub fn pre_init_enable_interrupts(app: &App, analysis: &CodegenAnalysis) -> Vec<
     // Finally, we activate the interrupts
     stmts.push(quote! {
         rtic::export::set_interrupts();
-        rtic::export::interrupt::enable();
+        rtic::export::global_enable();
     });
     stmts
 }

@@ -41,7 +41,7 @@ pub fn codegen(app: &App, analysis: &Analysis) -> Vec<TokenStream2> {
     }
 
     // Enable the interrupts -- this completes the `init`-ialization phase
-    stmts.push(quote!(rtic::export::interrupt::enable();));
+    stmts.push(quote!(rtic::export::global_enable();));
 
     stmts
 }

@@ -9,7 +9,7 @@ pub fn codegen(app: &App, analysis: &Analysis) -> Vec<TokenStream2> {
     let mut stmts = vec![];
 
     // Disable interrupts -- `init` must run with interrupts disabled
-    stmts.push(quote!(rtic::export::interrupt::disable();));
+    stmts.push(quote!(rtic::export::global_disable();));
 
     if app.args.core {
         stmts.push(quote!(

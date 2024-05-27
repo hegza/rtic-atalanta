@@ -1,7 +1,7 @@
-pub use rt_ss_bsp::{interrupt::Interrupt, riscv::interrupt, Peripherals};
+pub use rt_ss_bsp::{interrupt::Interrupt, Peripherals};
 
 use riscv_peripheral::clic::intattr::{Polarity, Trig};
-use rt_ss_bsp::{clic::CLIC, uart::uart_write};
+use rt_ss_bsp::{clic::CLIC, riscv, sprintln, uart::uart_write};
 
 #[cfg(all(feature = "riscv-atalanta", not(feature = "riscv-atalanta-backend")))]
 compile_error!("Building for Atalanta, but 'riscv-atalanta-backend not selected'");
@@ -10,6 +10,16 @@ mod mintthresh {
     use rt_ss_bsp::riscv::{read_csr_as_usize, write_csr_as_usize};
     read_csr_as_usize!(0x347);
     write_csr_as_usize!(0x347);
+}
+
+pub fn global_enable() {
+    uart_write("mstatus:en\r\n");
+    unsafe { riscv::interrupt::enable() }
+}
+
+pub fn global_disable() {
+    uart_write("mstatus:disable\r\n");
+    riscv::interrupt::disable()
 }
 
 /// Wrap the running task
