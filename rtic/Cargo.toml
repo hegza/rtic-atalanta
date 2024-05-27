@@ -40,6 +40,7 @@ atomic-polyfill = "1"
 rtic-macros = { path = "../rtic-macros", version = "=2.1.0" }
 rtic-core = "1"
 critical-section = "1"
+ufmt = "0.2"
 
 [dev-dependencies]
 lm3s6965 = "0.2"
