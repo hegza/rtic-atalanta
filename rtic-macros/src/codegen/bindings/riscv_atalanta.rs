@@ -120,7 +120,7 @@ pub fn check_stack_overflow_before_init(
     _analysis: &CodegenAnalysis,
 ) -> Vec<TokenStream2> {
     // This takes a lot of size from .text due to dependency on core::fmt so we disable it
-    vec![quote!(
+    vec![/*quote!(
         // Check for stack overflow using symbols from `risc-v-rt`.
         extern "C" {
             pub static _stack_start: u32;
@@ -136,7 +136,7 @@ pub fn check_stack_overflow_before_init(
                 panic!("pre-init sp ovrflw");
             }
         }
-    )]
+    )*/]
 }
 
 pub fn async_entry(
