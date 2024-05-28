@@ -18,8 +18,8 @@ pub fn interrupt_mod(app: &App) -> TokenStream2 {
 }
 
 pub fn impl_mutex(
-    app: &App,
-    analysis: &CodegenAnalysis,
+    _app: &App,
+    _analysis: &CodegenAnalysis,
     cfgs: &[Attribute],
     resources_prefix: bool,
     name: &Ident,
@@ -51,15 +51,15 @@ pub fn impl_mutex(
     )
 }
 
-pub fn extra_assertions(app: &App, analysis: &SyntaxAnalysis) -> Vec<TokenStream2> {
+pub fn extra_assertions(_app: &App, _analysis: &SyntaxAnalysis) -> Vec<TokenStream2> {
     vec![]
 }
 
-pub fn pre_init_preprocessing(app: &mut App, analysis: &SyntaxAnalysis) -> parse::Result<()> {
+pub fn pre_init_preprocessing(_app: &mut App, _analysis: &SyntaxAnalysis) -> parse::Result<()> {
     Ok(())
 }
 
-pub fn pre_init_checks(app: &App, analysis: &SyntaxAnalysis) -> Vec<TokenStream2> {
+pub fn pre_init_checks(app: &App, _analysis: &SyntaxAnalysis) -> Vec<TokenStream2> {
     let mut stmts = vec![];
     let int_mod = interrupt_mod(app);
 
@@ -96,15 +96,15 @@ pub fn pre_init_enable_interrupts(app: &App, analysis: &CodegenAnalysis) -> Vec<
     stmts
 }
 
-pub fn architecture_specific_analysis(app: &App, analysis: &SyntaxAnalysis) -> parse::Result<()> {
+pub fn architecture_specific_analysis(_app: &App, _analysis: &SyntaxAnalysis) -> parse::Result<()> {
     Ok(())
 }
 
-pub fn interrupt_entry(app: &App, analysis: &CodegenAnalysis) -> Vec<TokenStream2> {
+pub fn interrupt_entry(_app: &App, _analysis: &CodegenAnalysis) -> Vec<TokenStream2> {
     vec![]
 }
 
-pub fn interrupt_exit(app: &App, analysis: &CodegenAnalysis) -> Vec<TokenStream2> {
+pub fn interrupt_exit(_app: &App, _analysis: &CodegenAnalysis) -> Vec<TokenStream2> {
     vec![]
 }
 
@@ -130,14 +130,14 @@ pub fn check_stack_overflow_before_init(
 }
 
 pub fn async_entry(
-    app: &App,
-    analysis: &CodegenAnalysis,
-    dispatcher_name: Ident,
+    _app: &App,
+    _analysis: &CodegenAnalysis,
+    _dispatcher_name: Ident,
 ) -> Vec<TokenStream2> {
     vec![]
 }
 
-pub fn async_prio_limit(app: &App, analysis: &CodegenAnalysis) -> Vec<TokenStream2> {
+pub fn async_prio_limit(_app: &App, analysis: &CodegenAnalysis) -> Vec<TokenStream2> {
     let max = if let Some(max) = analysis.max_async_prio {
         quote!(#max)
     } else {
@@ -153,9 +153,9 @@ pub fn async_prio_limit(app: &App, analysis: &CodegenAnalysis) -> Vec<TokenStrea
 }
 
 pub fn handler_config(
-    app: &App,
-    analysis: &CodegenAnalysis,
-    dispatcher_name: Ident,
+    _app: &App,
+    _analysis: &CodegenAnalysis,
+    _dispatcher_name: Ident,
 ) -> Vec<TokenStream2> {
     let mut stmts = vec![];
 
@@ -164,6 +164,6 @@ pub fn handler_config(
     stmts
 }
 
-pub fn extra_modules(app: &App, analysis: &SyntaxAnalysis) -> Vec<TokenStream2> {
+pub fn extra_modules(_app: &App, _analysis: &SyntaxAnalysis) -> Vec<TokenStream2> {
     vec![]
 }
