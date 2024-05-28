@@ -158,6 +158,7 @@ pub enum Backends {
     Thumbv8Base,
     Thumbv8Main,
     RiscvEsp32C3,
+    RiscvAtalanta,
     Riscv32ImcClint, // not working yet (issues with portable-atomic features...)
     Riscv32ImacClint,
 }
@@ -170,6 +171,7 @@ impl Backends {
             Backends::Thumbv7 => ARMV7M,
             Backends::Thumbv8Base => ARMV8MBASE,
             Backends::Thumbv8Main => ARMV8MMAIN,
+            Backends::RiscvRtIbex => RISCV32EMC,
             Backends::Riscv32ImcClint | Backends::RiscvEsp32C3 => RISCV32IMC,
             Backends::Riscv32ImacClint => RISCV32IMAC,
         }
@@ -183,6 +185,7 @@ impl Backends {
             Backends::Thumbv8Base => "thumbv8base-backend",
             Backends::Thumbv8Main => "thumbv8main-backend",
             Backends::RiscvEsp32C3 => "riscv-esp32c3-backend",
+            Backends::RiscvAtalanta => "riscv-atalanta-backend",
             Backends::Riscv32ImcClint | Backends::Riscv32ImacClint => "riscv-clint-backend",
         }
     }
@@ -192,6 +195,7 @@ impl Backends {
             Backends::Thumbv6 | Backends::Thumbv8Base => "cortex-m-source-masking",
             Backends::Thumbv7 | Backends::Thumbv8Main => "cortex-m-basepri",
             Backends::RiscvEsp32C3 => "riscv-esp32c3",
+            Backends::RiscvAtalanta => "riscv-atalanta",
             Backends::Riscv32ImcClint | Backends::Riscv32ImacClint => "riscv-clint",
         }
     }
