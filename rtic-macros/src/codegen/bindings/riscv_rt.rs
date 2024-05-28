@@ -159,7 +159,7 @@ pub fn handler_config(
 ) -> Vec<TokenStream2> {
     let mut stmts = vec![];
 
-    stmts.push(quote!(#[export_name = "DefaultHandler"]));
+    stmts.push(quote!(#[bsp::rt::interrupt]));
 
     stmts
 }
