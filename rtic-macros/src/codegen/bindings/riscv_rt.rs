@@ -157,7 +157,11 @@ pub fn handler_config(
     analysis: &CodegenAnalysis,
     dispatcher_name: Ident,
 ) -> Vec<TokenStream2> {
-    vec![]
+    let mut stmts = vec![];
+
+    stmts.push(quote!(#[export_name = "DefaultHandler"]));
+
+    stmts
 }
 
 pub fn extra_modules(app: &App, analysis: &SyntaxAnalysis) -> Vec<TokenStream2> {
