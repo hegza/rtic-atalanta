@@ -16,6 +16,7 @@ macro_rules! with_backend {
             feature = "test-template",
             feature = "riscv-esp32c3",
             feature = "riscv-slic",
+            feature = "riscv-rt",
         ))]
         $($tokens)*
     };
@@ -119,5 +120,6 @@ with_backend! {
     feature = "test-template",
     feature = "riscv-esp32c3",
     feature = "riscv-slic",
+    feature = "riscv-rt",
 )))]
 compile_error!("Cannot compile. No backend feature selected.");
