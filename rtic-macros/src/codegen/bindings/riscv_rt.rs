@@ -27,7 +27,28 @@ pub fn impl_mutex(
     ceiling: u8,
     ptr: &TokenStream2,
 ) -> TokenStream2 {
-    quote!()
+    let path = if resources_prefix {
+        quote!(shared_resources::#name)
+    } else {
+        quote!(#name)
+    };
+
+    quote!(
+        #(#cfgs)*
+        impl<'a> rtic::Mutex for #path<'a> {
+            type T = #ty;
+
+            #[inline(always)]
+            fn lock<RTIC_INTERNAL_R>(&mut self, f: impl FnOnce(&mut #ty) -> RTIC_INTERNAL_R) -> RTIC_INTERNAL_R {
+
+                const CEILING: u8 = #ceiling;
+
+                unsafe {
+                    rtic::export::lock(#ptr, CEILING, f)
+                }
+            }
+        }
+    )
 }
 
 pub fn extra_assertions(app: &App, analysis: &SyntaxAnalysis) -> Vec<TokenStream2> {
