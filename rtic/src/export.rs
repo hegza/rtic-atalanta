@@ -41,6 +41,11 @@ mod slic;
 #[cfg(feature = "riscv-slic")]
 pub use slic::*;
 
+#[cfg(feature = "riscv-atalanta")]
+mod riscv_atalanta;
+#[cfg(feature = "riscv-atalanta")]
+pub use riscv_atalanta::*;
+
 #[inline(always)]
 pub fn assert_send<T: Send>() {}
 

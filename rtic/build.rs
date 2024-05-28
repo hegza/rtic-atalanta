@@ -30,6 +30,9 @@ fn main() {
         "riscv-clint-backend" => {
             println!("cargo:rustc-cfg=feature=\"riscv-slic\"");
         }
+        "riscv-atalanta-backend" => {
+            println!("cargo:rustc-cfg=feature=\"riscv-atalanta\"");
+        }
         _ => {
             panic!("Unknown backend feature: {:?}", backend);
         }
