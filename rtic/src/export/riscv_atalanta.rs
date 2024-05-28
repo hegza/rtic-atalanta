@@ -23,7 +23,7 @@ pub mod mintthresh {
 /// Set the given software interrupt as pending
 #[inline(always)]
 pub fn pend(intr: Interrupt) {
-    unsafe { CLIC::ip(intr).pend() };
+    riscv::interrupt::free(|| unsafe { CLIC::ip(intr).pend() });
 }
 
 // Wrap the running task
