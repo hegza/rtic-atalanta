@@ -7,7 +7,8 @@ pub use rt_ss_bsp::{
 
 use rt_ss_bsp::{
     clic::{InterruptNumber, Polarity, Trig, CLIC},
-    riscv, sprintln, ufmt, Interrupt,
+    interrupt::nested,
+    riscv, sprintln, Interrupt,
 };
 
 #[cfg(all(feature = "riscv-atalanta", not(feature = "riscv-atalanta-backend")))]
@@ -40,13 +41,13 @@ where
     sprintln!("run task@{} enter", level);
     if level == 1 {
         // If level is 1, level threshold should be 1
-        f();
+        unsafe { nested(|| f()) };
         // Set interrupt threshold (`mintthresh` CSR) to 1
         mintthresh::write(1)
     } else {
         // Read current thresh
         let initial = mintthresh::read();
-        f();
+        unsafe { nested(|| f()) };
         // Write back old thresh
         mintthresh::write(initial)
     }
