@@ -67,7 +67,7 @@ riscv-clint-backend = [
   "riscv-slic/clint-backend",
   "rtic-macros/riscv-slic",
 ]
-riscv-atalanta-backend = ["rt_ss_bsp", "rtic-macros/riscv-rt"]
+riscv-atalanta-backend = ["rt_ss_bsp", "riscv", "rtic-macros/riscv-rt"]
 
 # needed for testing
 test-critical-section = ["cortex-m/critical-section-single-core"]
