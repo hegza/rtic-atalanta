@@ -49,6 +49,25 @@ where
     }
 }
 
+/// Runs a function that takes a shared resource with a priority ceiling.
+/// This function returns the return value of the target function.
+///
+/// # Safety
+///
+/// Input argument `ptr` must be a valid pointer to a shared resource.
+#[inline]
+pub unsafe fn lock<F, T, R>(ptr: *mut T, ceiling: u8, f: F) -> R
+where
+    F: FnOnce(&mut T) -> R,
+{
+    // We restore the previous threshold after the function is done
+    let previous = mintthresh::read();
+    mintthresh::write(ceiling as usize);
+    let r = f(&mut *ptr);
+    mintthresh::write(previous);
+    r
+}
+
 pub fn enable(intr: Interrupt, level: u8) {
     CLIC::attr(intr).set_trig(Trig::Edge);
     CLIC::attr(intr).set_polarity(Polarity::Pos);
