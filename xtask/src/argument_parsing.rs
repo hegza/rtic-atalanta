@@ -1,6 +1,6 @@
 use crate::{
-    cargo_command::CargoCommand, Target, ARMV6M, ARMV7M, ARMV8MBASE, ARMV8MMAIN, RISCV32IMAC,
-    RISCV32IMC,
+    cargo_command::CargoCommand, Target, ARMV6M, ARMV7M, ARMV8MBASE, ARMV8MMAIN, RISCV32EMC,
+    RISCV32IMAC, RISCV32IMC,
 };
 use clap::{Args, Parser, Subcommand};
 use core::fmt;
