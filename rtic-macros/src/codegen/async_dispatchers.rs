@@ -29,8 +29,9 @@ pub fn codegen(app: &App, analysis: &Analysis) -> TokenStream2 {
     for (&level, channel) in &analysis.channels {
         let mut stmts = vec![];
 
+        let dispatcher_name_str = interrupts.get(&level).expect("UNREACHABLE").0.to_string();
         let dispatcher_name = if level > 0 {
-            util::suffixed(&interrupts.get(&level).expect("UNREACHABLE").0.to_string())
+            util::suffixed(&dispatcher_name_str)
         } else {
             util::zero_prio_dispatcher_ident()
         };
@@ -77,6 +78,7 @@ pub fn codegen(app: &App, analysis: &Analysis) -> TokenStream2 {
                 #(#attribute)*
                 #(#config)*
                 unsafe fn #dispatcher_name() {
+                    bsp::sprintln!("{} enter", #dispatcher_name_str);
                     #(#entry_stmts)*
                     #(#async_entry_stmts)*
 
@@ -88,15 +90,18 @@ pub fn codegen(app: &App, analysis: &Analysis) -> TokenStream2 {
                     });
 
                     #(#exit_stmts)*
+                    bsp::sprintln!("{} leave", #dispatcher_name_str);
                 }
             ));
         } else {
             items.push(quote!(
                 #[allow(non_snake_case)]
                 unsafe fn #dispatcher_name() -> ! {
+                    bsp::sprintln!("{} enter", #dispatcher_name_str);
                     loop {
                         #(#stmts)*
                     }
+                    bsp::sprintln!("{} leave", #dispatcher_name_str);
                 }
             ));
         }
