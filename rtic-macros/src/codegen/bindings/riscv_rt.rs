@@ -8,7 +8,7 @@ use syn::{parse, Attribute, Ident};
 
 pub fn interrupt_ident() -> Ident {
     let span = Span::call_site();
-    Ident::new("interrupt", span)
+    Ident::new("Interrupt", span)
 }
 
 pub fn interrupt_mod(app: &App) -> TokenStream2 {
