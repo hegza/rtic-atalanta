@@ -7,7 +7,7 @@ pub use rt_ss_bsp::{
 
 use rt_ss_bsp::{
     clic::{Polarity, Trig, CLIC},
-    riscv, Interrupt,
+    riscv, sprintln, ufmt, Interrupt,
 };
 
 #[cfg(all(feature = "riscv-atalanta", not(feature = "riscv-atalanta-backend")))]
@@ -23,7 +23,9 @@ pub mod mintthresh {
 /// Set the given software interrupt as pending
 #[inline(always)]
 pub fn pend(intr: Interrupt) {
+    sprintln!("pend {:?} enter", intr);
     riscv::interrupt::free(|| unsafe { CLIC::ip(intr).pend() });
+    sprintln!("pend {:?} leave", intr);
 }
 
 // Wrap the running task
@@ -35,6 +37,7 @@ pub fn run<F>(level: u8, f: F)
 where
     F: FnOnce(),
 {
+    sprintln!("run task@{} enter", level);
     if level == 1 {
         // If level is 1, level threshold should be 1
         f();
@@ -47,6 +50,7 @@ where
         // Write back old thresh
         mintthresh::write(initial)
     }
+    sprintln!("run task@{} leave", level);
 }
 
 /// Runs a function that takes a shared resource with a priority ceiling.
@@ -60,15 +64,18 @@ pub unsafe fn lock<F, T, R>(ptr: *mut T, ceiling: u8, f: F) -> R
 where
     F: FnOnce(&mut T) -> R,
 {
+    sprintln!("lock (ceiling={}) enter", ceiling);
     // We restore the previous threshold after the function is done
     let previous = mintthresh::read();
     mintthresh::write(ceiling as usize);
     let r = f(&mut *ptr);
     mintthresh::write(previous);
+    sprintln!("lock (ceiling={}) leave", ceiling);
     r
 }
 
 pub fn enable(intr: Interrupt, level: u8) {
+    sprintln!("enable {:?}@{}", intr, level);
     CLIC::attr(intr).set_trig(Trig::Edge);
     CLIC::attr(intr).set_polarity(Polarity::Pos);
     CLIC::ctl(intr).set_level(level);
