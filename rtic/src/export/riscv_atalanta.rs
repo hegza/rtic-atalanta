@@ -76,7 +76,7 @@ where
 }
 
 pub fn enable(intr: Interrupt, level: u8) {
-    sprintln!("enable {:?} = {} @ level = {}", intr, intr.number(), level);
+    //sprintln!("enable {:?} = {} @ level = {}", intr, intr.number(), level);
     CLIC::attr(intr).set_trig(Trig::Edge);
     CLIC::attr(intr).set_polarity(Polarity::Pos);
     CLIC::ctl(intr).set_level(level);
