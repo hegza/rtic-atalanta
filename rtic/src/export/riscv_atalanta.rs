@@ -47,6 +47,7 @@ where
     } else {
         // Read current thresh
         let initial = mintthresh::read();
+        mintthresh::write(level as usize);
         unsafe { nested(|| f()) };
         // Write back old thresh
         mintthresh::write(initial)
